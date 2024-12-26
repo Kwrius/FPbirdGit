@@ -9,7 +9,9 @@ public class birdFlap : MonoBehaviour
     public Animator animator;
     public GameManager gameManager;
     public Transform birdImg;
-    private bool begin = false;
+    public AudioSource audioSource;
+    public AudioClip flapSound;
+    private bool isStarted = false;
     public float rotationZScale = 5f;
     public float flapSpeed = 6f;
 
@@ -42,6 +44,7 @@ public class birdFlap : MonoBehaviour
     public void Flap()
     {
         rb2D.velocity = new Vector2(0, flapSpeed);
+        if (isStarted) audioSource.PlayOneShot(flapSound);
     }
 
     public void ChangeState(bool isFly, bool isSim = false)
@@ -49,6 +52,7 @@ public class birdFlap : MonoBehaviour
         if (isFly)
         {
             animator.SetInteger("state", 1);
+            isStarted = true;
         }
         else
         {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -12,11 +13,21 @@ public class GameManager : MonoBehaviour
     public GameObject score;
     public GameObject bird;
     public GameObject over;
+    public GameObject black;
 
     public Text currentScoreText;
     public Text bestScoreText;
     public GameObject newImg;
     public Image medal;
+
+    public AudioSource startAudioSource;
+    public AudioClip startSound;
+    public AudioSource getScoreAudioSource;
+    public AudioClip getScoreSound;
+    public AudioSource deathAudioSource;
+    public AudioClip deathSound;
+    public AudioSource overAudioSource;
+    public AudioClip overSound;
 
     public List<Sprite> medals;
 
@@ -25,8 +36,16 @@ public class GameManager : MonoBehaviour
 
     public Text scoreText;
 
+    //public void Start()
+    //{
+    //    Tools.Ins.ShowUI(black);
+    //    Invoke("HideBlackUI", 0.6f);
+    //}
+
     public void PlayBtnClick()
     {
+        startAudioSource.PlayOneShot(startSound);
+
         Tools.Ins.HideUI(main);
         Tools.Ins.ShowUI(tutorial);
         Tools.Ins.ShowUI(score);
@@ -57,6 +76,8 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameStarted) return;
 
+        deathAudioSource.PlayOneShot(deathSound);
+
         isGameReady = false;
         isGameStarted = false;
 
@@ -64,7 +85,12 @@ public class GameManager : MonoBehaviour
         GameObject.Find("bgs").GetComponent<bgController>().isMove = false;
         GameObject.Find("lands").GetComponent<landController>().isMove = false;
 
-        Tools.Ins.ShowUI(over);
+        //bird.GetComponent<birdFlap>().ChangeState(false);
+
+        //Wait();
+        Invoke("ShowOverUI", 0.6f);
+
+        //Tools.Ins.ShowUI(over);
         //over.SetActive(true);
 
         int score = int.Parse(scoreText.text);
@@ -101,9 +127,30 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameStarted) return;
         scoreText.text = (int.Parse(scoreText.text) + 1).ToString();
+        getScoreAudioSource.PlayOneShot(getScoreSound);
     }
 
     public void ReStart()
+    {
+        startAudioSource.PlayOneShot(startSound);
+        Tools.Ins.ShowUI(black);
+        //System.Threading.Thread.Sleep(1000);
+        //Tools.Ins.HideUI(black);
+        Invoke("LoadSampleScene", 0.6f);
+    }
+
+    private void ShowOverUI()
+    {
+        overAudioSource.PlayOneShot(overSound);
+        Tools.Ins.ShowUI(over);
+    }
+
+    private void HideBlackUI()
+    {
+        Tools.Ins.HideUI(black);
+    }
+
+    private void LoadSampleScene()
     {
         SceneManager.LoadScene("SampleScene");
     }
